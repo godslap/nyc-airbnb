@@ -23,3 +23,24 @@ svg {
   display:flex;
   justify-content:center;
 }
+
+.filter-box {
+  margin-bottom: 10px;
+}
+
+#price {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 20px;
+}
+
+#slider {
+  width: 50%;
+  margin-left: 20px;
+}
+
+#filters {
+  border: 1px solid grey;
+  width: 60%;
+  margin: 0 auto;
+}

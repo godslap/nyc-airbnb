@@ -22,13 +22,25 @@
       Made by Wen Yu An.
     </p>
     <div id="filters">
-      <div id="roomtype">
-        <label for="roomtypechoice">Room type:</label>     
-        <input type="checkbox" value="entire" checked>Entire home/apt
-        <input type="checkbox" value="private" checked>Private room
-        <input type="checkbox" value="shared" checked>Shared room
+      <div id="price" class="filter-box">
+        <span>Price:</span>
+        <div id="slider"></div>
       </div>
-      <div id="slider"></div>
+      <div id="roomtype" class="filter-box">
+          <span>Room type:</span>     
+          <input type="checkbox" value="entire" checked>Entire home/apt
+          <input type="checkbox" value="private" checked>Private room
+          <input type="checkbox" value="shared" checked>Shared room
+      </div>
+      <div id="nbh-group" class="filter-box">
+          <span>Room type:</span>     
+          <input type="checkbox" value="brooklyn" checked>Brooklyn
+          <input type="checkbox" value="manhattan" checked>Manhattan
+          <input type="checkbox" value="queens" checked>Queens
+          <input type="checkbox" value="sIsland" checked>Staten Island
+          <input type="checkbox" value="bronx" checked>Bronx
+      </div>
+      <button id="submit">Update</button>
     </div>
     <div id="container"></div>
 

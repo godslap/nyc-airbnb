@@ -155,10 +155,12 @@ function renderVis(data) {
 var slider = document.getElementById('slider');
 
 noUiSlider.create(slider, {
-    start: [20, 80],
-    connect: true,
+    start: [0, 10000],
+    tooltips: [true, true],
+    connect:true,
+    step: 100,
     range: {
         'min': 0,
-        'max': 100
-    }
+        'max': 10000
+    },
 });
