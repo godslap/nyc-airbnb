@@ -7,6 +7,7 @@ body {
   font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
   margin: 2em;
   text-align: center;
+  font-size: 16px;
 }
 
 h1 {
@@ -43,4 +44,14 @@ svg {
   border: 1px solid grey;
   width: 60%;
   margin: 0 auto;
+  padding: 10px;
+}
+
+#update {
+  width: 80px;
+  height: 30px;
+  background-color: #555afcd8;
+  border: none;
+  color: white;
+  font-size: 1em;
 }
