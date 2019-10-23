@@ -82,11 +82,12 @@ var colorScale = d3.scaleSequential(d3.interpolateTurbo).domain([0, 400]);
 // gradient color legend
 d3.select("#container")
   .append("svg")
-  .attr("id", "legend-svg");
+  .attr("id", "legend-svg")
+  .style("margin-left", -40);
 
 var legend = d3
   .select("#legend-svg")
-  .attr("width", 50)
+  .attr("width", 75)
   .attr("height", height)
   .append("g")
   .attr("transform", "translate(" +0 + "," + margin + ")");
@@ -133,6 +134,15 @@ d3.select("#legend-svg").append("g")
       .attr("transform", "translate(" + 25 + ", 0)")
       .call(d3.axisRight(legendscale));
 
+d3.select("#legend-svg")
+  .append("text")
+  .attr("transform", "rotate(90)")
+  .attr("class", "axis-label")
+  .attr("y", 0)
+  .attr("x", 0 + height / 2)
+  .style("text-anchor", "middle")
+  .text("Price($)");
+
 // add the silder to choose the price range the user want
 // using https://refreshless.com/nouislider/
 var slider = document.getElementById('slider');
@@ -141,10 +151,17 @@ noUiSlider.create(slider, {
     start: [0, 10000],
     tooltips: [true, true],
     connect:true,
-    step: 100,
+    // it's a lonlinear distribution
     range: {
-        'min': 0,
+        'min': [0,10],
+        '25%': [70,10],
+        '50%': [100,10],
+        '75%:': [200,100],
         'max': 10000
+    },
+    pips: {
+      mode: 'range',
+      density: 3
     },
 });
 
@@ -185,8 +202,6 @@ function updateData(data) {
 }
 
 function renderVis(data) {
-  
-
   svg
     .selectAll("circle")
     .data(data, d => d["id"])
