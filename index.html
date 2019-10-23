@@ -28,19 +28,19 @@
       </div>
       <div id="roomtype" class="filter-box">
           <span>Room type:</span>     
-          <input type="checkbox" value="entire" checked>Entire home/apt
-          <input type="checkbox" value="private" checked>Private room
-          <input type="checkbox" value="shared" checked>Shared room
+          <input type="checkbox" name="roomtypechoice" value="Entire home/apt" checked>Entire home/apt
+          <input type="checkbox" name="roomtypechoice" value="Private room" checked>Private room
+          <input type="checkbox" name="roomtypechoice" value="Shared room" checked>Shared room
       </div>
       <div id="nbh-group" class="filter-box">
-          <span>Room type:</span>     
-          <input type="checkbox" value="brooklyn" checked>Brooklyn
-          <input type="checkbox" value="manhattan" checked>Manhattan
-          <input type="checkbox" value="queens" checked>Queens
-          <input type="checkbox" value="sIsland" checked>Staten Island
-          <input type="checkbox" value="bronx" checked>Bronx
+          <span>Neighbourhood group:</span>     
+          <input type="checkbox" name="nbhchoice" value="Brooklyn" checked>Brooklyn
+          <input type="checkbox" name="nbhchoice" value="Manhattan" checked>Manhattan
+          <input type="checkbox" name="nbhchoice" value="Queens" checked>Queens
+          <input type="checkbox" name="nbhchoice" value="Staten Island" checked>Staten Island
+          <input type="checkbox" name="nbhchoice" value="Bronx" checked>Bronx
       </div>
-      <button id="submit">Update</button>
+      <button id="update" onclick="update()">Update</button>
     </div>
     <div id="container"></div>
 

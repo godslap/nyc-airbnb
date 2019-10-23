@@ -1,10 +1,12 @@
-
-d3.csv(
-  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
-).then(function(data) {
-  // console.log(data);
-  renderVis(data);
-});
+const update = () => {
+  d3.csv(
+    "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+  ).then(function(data) {
+    console.log(updateData(data));
+    renderVis(updateData(data));
+  });
+}
+update();
 
 var height = 830;
 var width = 1030;
@@ -131,7 +133,60 @@ d3.select("#legend-svg").append("g")
       .attr("transform", "translate(" + 25 + ", 0)")
       .call(d3.axisRight(legendscale));
 
+// add the silder to choose the price range the user want
+// using https://refreshless.com/nouislider/
+var slider = document.getElementById('slider');
+
+noUiSlider.create(slider, {
+    start: [0, 10000],
+    tooltips: [true, true],
+    connect:true,
+    step: 100,
+    range: {
+        'min': 0,
+        'max': 10000
+    },
+});
+
+// get the value of checked checkboxes
+const getCheckedBoxes = (name) => {
+  var checkboxes = document.getElementsByName(name);
+  var boxesChecked = [];
+  for (var i=0; i<checkboxes.length; i++) {
+    if (checkboxes[i].checked) {
+      boxesChecked.push(checkboxes[i].value);
+      //console.log(checkboxes[i].value);
+    }
+  }
+  return boxesChecked;
+}
+
+function updateData(data) {
+  // get the price range from slider
+  var priceRange = slider.noUiSlider.get();
+  var minPrice = Number(priceRange[0]);
+  var maxPrice = Number(priceRange[1]);
+
+  // get the room types checked
+  var roomtypes = getCheckedBoxes("roomtypechoice");
+  
+  if (!roomtypes) { alert("Please choose at least one room type.")};
+
+  // get the neighbourhood group checked
+  var nbhGroups = getCheckedBoxes("nbhchoice")
+  if (!nbhGroups) { alert("Please choose at least one neighbourhood group.")}
+ 
+  // filter the data according to user's choice
+  var filterdata = data.filter(d => {
+    return d.price>= minPrice && d.price <= maxPrice && roomtypes.includes(d.room_type) && nbhGroups.includes(d.neighbourhood_group);
+  })
+  //console.log(filterdata);
+  return filterdata;
+}
+
 function renderVis(data) {
+  
+
   svg
     .selectAll("circle")
     .data(data, d => d["id"])
@@ -147,20 +202,8 @@ function renderVis(data) {
     .append("circle")
     .attr("cx", d => x(d["longitude"]))
     .attr("cy", d => y(d["latitude"]))
+    .transition()
     .attr("r", 3)
     .attr("fill", d => colorScale(d["price"]))
     .style("opacity", 0.9);
 }
-
-var slider = document.getElementById('slider');
-
-noUiSlider.create(slider, {
-    start: [0, 10000],
-    tooltips: [true, true],
-    connect:true,
-    step: 100,
-    range: {
-        'min': 0,
-        'max': 10000
-    },
-});
