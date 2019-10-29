@@ -9,6 +9,7 @@
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="style.css">
     <link href="nouislider.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap" rel="stylesheet">
     
     <!-- import the webpage's javascript file -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -17,10 +18,6 @@
   <body>
     <script src="nouislider.min.js"></script>
     <h1>The visualization of NYC Airbnb</h1>
-    
-    <p>
-      Made by Wen Yu An.
-    </p>
     <div id="filters">
       <div id="price" class="filter-box">
         <span>Price($):</span>
@@ -28,21 +25,20 @@
       </div>
       <div id="roomtype" class="filter-box">
           <span>Room type:</span>     
-          <input type="checkbox" name="roomtypechoice" value="Entire home/apt" checked>Entire home/apt
-          <input type="checkbox" name="roomtypechoice" value="Private room" checked>Private room
-          <input type="checkbox" name="roomtypechoice" value="Shared room" checked>Shared room
+          <input type="checkbox" name="roomtypechoice" value="Entire home/apt" id="entire" checked><label for="entire">Entire home/apt</label>
+          <input type="checkbox" name="roomtypechoice" value="Private room" id="private" checked><label for="private">Private room</label>
+          <input type="checkbox" name="roomtypechoice" value="Shared room" id="shared" checked><label for="shared">Shared room</label>
       </div>
       <div id="nbh-group" class="filter-box">
           <span>Neighbourhood group:</span>     
-          <input type="checkbox" name="nbhchoice" value="Brooklyn" checked>Brooklyn
-          <input type="checkbox" name="nbhchoice" value="Manhattan" checked>Manhattan
-          <input type="checkbox" name="nbhchoice" value="Queens" checked>Queens
-          <input type="checkbox" name="nbhchoice" value="Staten Island" checked>Staten Island
-          <input type="checkbox" name="nbhchoice" value="Bronx" checked>Bronx
+          <input type="checkbox" name="nbhchoice" value="Brooklyn" id="brooklyn" checked><label for="brooklyn">Brooklyn</label>
+          <input type="checkbox" name="nbhchoice" value="Manhattan" id="manhattan" checked><label for="manhattan">Manhattan</label>
+          <input type="checkbox" name="nbhchoice" value="Queens" id="queens" checked><label for="queens">Queens</label>
+          <input type="checkbox" name="nbhchoice" value="Staten Island" id="sisland" checked><label for="sisland">Staten Island</label>
+          <input type="checkbox" name="nbhchoice" value="Bronx" id="bronx" checked><label for="bronx">Bronx</label>
       </div>
       <button id="update" onclick="update()">Update</button>
     </div>
     <div id="container"></div>
-
   </body>
 </html>

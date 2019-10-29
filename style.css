@@ -4,14 +4,14 @@
 }
 
 body {
-  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+  font-family: 'Lato', sans-serif;
   margin: 2em;
   text-align: center;
   font-size: 16px;
 }
 
 h1 {
-  font-style: italic;
+  font-weight: bold;
   color: #373fff;
 }
 
@@ -27,11 +27,18 @@ svg {
 
 .filter-box {
   margin-bottom: 10px;
+  text-align: left;
+}
+
+.filter-box span {
+  display: inline-block;
+  width: 30%;
+  text-align: right;
 }
 
 #price {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   margin: 40px 0 50px;
 }
 
@@ -41,8 +48,8 @@ svg {
 }
 
 #filters {
-  border: 1px solid grey;
-  border-radius: 3px;
+  border: 1px solid #c7c7c7;
+  border-radius: 5px;
   width: 1000px;
   margin: 0 auto;
   padding: 10px;
@@ -61,4 +68,13 @@ svg {
 
 #update:hover {
   cursor: pointer;
+}
+
+label {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+path, line {
+  color: #c7c7c7;
 }

@@ -160,9 +160,9 @@ noUiSlider.create(slider, {
     connect:true,
     // it's a lonlinear distribution
     range: {
-        'min': [0,10],
-        '25%': [70,10],
-        '50%': [100,10],
+        'min': [0,1],
+        '25%': [70,1],
+        '50%': [100,1],
         '75%:': [200,100],
         'max': 10000
     },
