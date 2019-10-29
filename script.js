@@ -192,8 +192,7 @@ function updateData(data) {
   var maxPrice = Number(priceRange[1]);
 
   // get the room types checked
-  var roomtypes = getCheckedBoxes("roomtypechoice");
-  
+  var roomtypes = getCheckedBoxes("roomtypechoice");  
   if (!roomtypes) { alert("Please choose at least one room type.")};
 
   // get the neighbourhood group checked
@@ -213,7 +212,6 @@ function renderVis(data) {
     .selectAll("circle")
     .data(data, d => d["id"])
     .exit()
-    .transition()
     .attr("r", 0)
     .remove();
 
@@ -224,7 +222,6 @@ function renderVis(data) {
     .append("circle")
     .attr("cx", d => x(d["longitude"]))
     .attr("cy", d => y(d["latitude"]))
-    .transition()
     .attr("r", 3)
     .attr("fill", d => colorScale(d["price"]))
     .style("opacity", 0.9);
