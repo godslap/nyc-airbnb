@@ -1,13 +1,16 @@
 const update = () => {
-  console.time("load");
+  //console.time("load");
   d3.csv(
     "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
   ).then(function(data) {
-    console.timeEnd("load");
+    //console.timeEnd("load");
     //console.log(updateData(data));
-    console.time("render");
-    renderVis(updateData(data));
-    console.timeEnd("render");
+    //console.time("render");
+    //console.time("update data");
+    var selecteddata = updateData(data);
+    //console.timeEnd("update data");
+    renderVis(selecteddata);
+    //console.timeEnd("render");
   });
 }
 update();
@@ -60,7 +63,7 @@ svg
 svg
   .append("text")
   .attr("class", "axis-label")
-  .attr("y", height)
+  .attr("y", height-15)
   .attr("x", 0 + width / 2)
   .style("text-anchor", "middle")
   .text("Longitude");
@@ -190,12 +193,16 @@ function updateData(data) {
 
   // get the room types checked
   var roomtypes = getCheckedBoxes("roomtypechoice");
-  
-  if (!roomtypes) { alert("Please choose at least one room type.")};
+  console.log(roomtypes);  
+  if (roomtypes.length === 0) { 
+    alert("Please choose at least one room type.");
+  };
 
   // get the neighbourhood group checked
   var nbhGroups = getCheckedBoxes("nbhchoice")
-  if (!nbhGroups) { alert("Please choose at least one neighbourhood group.")}
+  if (nbhGroups.length === 0) { 
+    alert("Please choose at least one neighbourhood group.")
+  };
  
   // filter the data according to user's choice
   var filterdata = data.filter(d => {
@@ -211,7 +218,6 @@ function renderVis(data) {
     .selectAll("circle")
     .data(data, d => d["id"])
     .exit()
-    .transition()
     .attr("r", 0)
     .remove();
 
@@ -222,7 +228,6 @@ function renderVis(data) {
     .append("circle")
     .attr("cx", d => x(d["longitude"]))
     .attr("cy", d => y(d["latitude"]))
-    .transition()
     .attr("r", 3)
     .attr("fill", d => colorScale(d["price"]))
     .style("opacity", 0.9);
