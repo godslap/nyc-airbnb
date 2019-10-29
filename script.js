@@ -1,9 +1,13 @@
 const update = () => {
+  console.time("load");
   d3.csv(
     "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
   ).then(function(data) {
-    console.log(updateData(data));
+    console.timeEnd("load");
+    //console.log(updateData(data));
+    console.time("render");
     renderVis(updateData(data));
+    console.timeEnd("render");
   });
 }
 update();
@@ -201,6 +205,7 @@ function updateData(data) {
   return filterdata;
 }
 
+// try to progressively render the data
 function renderVis(data) {
   svg
     .selectAll("circle")
