@@ -202,6 +202,7 @@ function updateData(data) {
     return d.price>= minPrice && d.price <= maxPrice && roomtypes.includes(d.room_type) && nbhGroups.includes(d.neighbourhood_group);
   })
   //console.log(filterdata);
+  d3.select('#roomnumber').text(filterdata.length);
   return filterdata;
 }
 
