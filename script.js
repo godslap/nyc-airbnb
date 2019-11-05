@@ -226,3 +226,40 @@ function renderVis(data) {
     .attr("fill", d => colorScale(d["price"]))
     .style("opacity", 0.9);
 }
+
+var sideplotWidth = 500;
+var sideplotHeight = height /2;
+var sideplotMargin = 50;
+//violin plot
+d3.select('#container')
+  .append('div')
+  .attr("id", "sideplot")
+  .attr("width", 500)
+  .attr("height", height);
+
+d3.select('#sideplot')
+  .append('svg')
+  .attr('id', 'violinPlot')
+  .attr('width', sideplotWidth)
+  .attr('height', sideplotHeight);
+
+var violin = d3.select('#violinPlot');
+
+var xv = d3.scaleBand()
+.range([ sideplotMargin, sideplotWidth- sideplotMargin ])
+.domain(["Brooklyn", "Manhattan","Queens","Staten Island","Bronx"])
+.padding(0.05)    
+
+violin.append("g")
+.attr("class", "axis")
+.attr("transform", "translate(0," + (sideplotHeight-sideplotMargin) + ")")
+.call(d3.axisBottom(xv))
+
+var yv = d3.scaleLinear()
+    .domain([0,530])        
+    .range([sideplotHeight-sideplotMargin, sideplotMargin])
+
+violin.append("g")
+.attr("class", "axis")
+.attr("transform", "translate(" + sideplotMargin+ ",0)")
+.call( d3.axisLeft(yv) )
