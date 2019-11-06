@@ -227,10 +227,12 @@ function renderVis(data) {
     .style("opacity", 0.9);
 }
 
+
+//violin plot
 var sideplotWidth = 500;
 var sideplotHeight = height /2;
 var sideplotMargin = 50;
-//violin plot
+
 d3.select('#container')
   .append('div')
   .attr("id", "sideplot")
@@ -263,3 +265,9 @@ violin.append("g")
 .attr("class", "axis")
 .attr("transform", "translate(" + sideplotMargin+ ",0)")
 .call( d3.axisLeft(yv) )
+
+d3.csv(
+  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+).then(function(data) {
+  
+});
