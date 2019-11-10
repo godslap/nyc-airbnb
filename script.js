@@ -258,6 +258,14 @@ violin.append("g")
   .attr("transform", "translate(0," + (sideplotHeight - sideplotMargin) + ")")
   .call(d3.axisBottom(xv))
 
+violin
+  .append("text")
+  .attr("class", "axis-label")
+  .attr("y", sideplotMargin)
+  .attr("x", 0 + sideplotWidth / 2)
+  .style("text-anchor", "middle")
+  .text("Price distrubution");
+
 var yv = d3.scaleLinear()
   .domain([0, 530])
   .range([sideplotHeight - sideplotMargin, sideplotMargin])
@@ -326,7 +334,7 @@ d3.csv(
       return (d.value)
     }) 
     .style("stroke", "none")
-    .style("fill", "#6166fd")
+    .style("fill", "#69badb")
     .attr("d", d3.area()
       .x0(function (d) {
         return (xNum(-d.length))
