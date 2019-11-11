@@ -105,11 +105,11 @@ linearGradient
   .selectAll("stop")
   .data(
     colorScale
-    .ticks()
-    .map((el, i, arr) => ({
-      offset: `${(100 * i) / (arr.length - 1)}%`,
-      color: colorScale(el)
-    }))
+      .ticks()
+      .map((el, i, arr) => ({
+        offset: `${(100 * i) / (arr.length - 1)}%`,
+        color: colorScale(el)
+      }))
   )
   .enter()
   .append("stop")
@@ -289,15 +289,15 @@ d3.csv(
   })
 
   // Compute the binning for each group of the dataset
-  var sumstat = d3.nest() 
+  var sumstat = d3.nest()
     .key(function (d) {
       return d.neighbourhood_group;
     })
-    .rollup(function (d) { 
+    .rollup(function (d) {
       input = d.map(function (g) {
         return g.price;
-      }) 
-      bins = histogram(input) 
+      })
+      bins = histogram(input)
       return (bins)
     })
     .entries(filterdata)
@@ -328,11 +328,11 @@ d3.csv(
     .append("g")
     .attr("transform", function (d) {
       return ("translate(" + xv(d.key) + " ,0)")
-    }) 
+    })
     .append("path")
     .datum(function (d) {
       return (d.value)
-    }) 
+    })
     .style("stroke", "none")
     .style("fill", "#69badb")
     .attr("d", d3.area()
@@ -345,6 +345,76 @@ d3.csv(
       .y(function (d) {
         return (yv(d.x0))
       })
-      .curve(d3.curveCatmullRom) 
+      .curve(d3.curveCatmullRom)
     )
 });
+
+// the long/short term bar chart
+d3.select('#sideplot')
+  .append('svg')
+  .attr('id', 'termbarchart')
+  .attr('width', sideplotWidth)
+  .attr('height', sideplotHeight);
+
+var termbar = d3.select('#termbarchart')
+
+var subgroups = ["short_term", "long_term"];
+var groups = ["Brooklyn", "Manhattan", "Queens", "Staten Island", "Bronx"];
+
+var xb = d3.scaleBand()
+  .domain(groups)
+  .range([sideplotMargin, sideplotWidth - sideplotMargin])
+  .padding([0.2]);
+
+termbar.append('g')
+  .attr("class", "axis")
+  .attr("transform", "translate(0," + (sideplotHeight - sideplotMargin) + ")")
+  .call(d3.axisBottom(xb));
+
+d3.csv(
+  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+).then(function (data) {
+  //restructure the data
+  var newdata = groups.map(ng => {
+    var shortTermNum = data.filter(e => e.neighbourhood_group === ng && e.minimum_nights <= 7).length;
+    var longTermNum = data.filter(e => e.neighbourhood_group === ng && e.minimum_nights > 7).length;
+    return { neighbourhood_group: ng, short_term: shortTermNum, long_term: longTermNum };
+  })
+  console.log(newdata);
+  var maxheight = d3.max(newdata, function (d) { return Math.max(d.short_term, d.long_term) })
+  console.log(maxheight);
+
+  var yb = d3.scaleLinear()
+    .domain([0, maxheight+1000])
+    .range([sideplotHeight - sideplotMargin, sideplotMargin]);
+
+  termbar.append('g')
+    .attr("class", "axis")
+    .attr("transform", "translate(" + sideplotMargin + ",0)")
+    .call(d3.axisLeft(yb));
+
+  // subgroup position
+  var xSubgroup = d3.scaleBand()
+                    .domain(subgroups)
+                    .range([0, xb.bandwidth()])
+                    .padding([0.05])
+  
+  var subcolor = d3.scaleOrdinal()
+                    .domain(subgroups)
+                    .range(['green', '#69badb'])
+  
+  termbar.append('g')
+          .selectAll('g')
+          .data(newdata)
+          .enter()
+          .append('g')
+          .attr('transform', function(d) {return "translate(" + xb(d.neighbourhood_group) + ",0)";})
+          .selectAll('rect')
+          .data(function(d) {return subgroups.map(function(key){return {key:key, value:d[key]};});})
+          .enter().append('rect')
+                  .attr('x', d => xSubgroup(d.key))
+                  .attr('y', d => yb(d.value))
+                  .attr('width', xSubgroup.bandwidth())
+                  .attr('height', d => sideplotHeight-sideplotMargin- yb(d.value))
+                  .attr('fill', d => subcolor(d.key));                    
+})
