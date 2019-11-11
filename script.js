@@ -385,7 +385,7 @@ d3.csv(
   console.log(maxheight);
 
   var yb = d3.scaleLinear()
-    .domain([0, maxheight+1000])
+    .domain([0, maxheight])
     .range([sideplotHeight - sideplotMargin, sideplotMargin]);
 
   termbar.append('g')
@@ -401,7 +401,7 @@ d3.csv(
   
   var subcolor = d3.scaleOrdinal()
                     .domain(subgroups)
-                    .range(['green', '#69badb'])
+                    .range(['#81c784', '#69badb'])
   
   termbar.append('g')
           .selectAll('g')
