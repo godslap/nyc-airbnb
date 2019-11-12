@@ -186,7 +186,7 @@ function updateData(data) {
 
   // get the room types checked
   var roomtypes = getCheckedBoxes("roomtypechoice");
-  console.log(roomtypes);
+  //console.log(roomtypes);
   if (roomtypes.length === 0) {
     alert("Please choose at least one room type.");
   };
@@ -261,7 +261,7 @@ violin.append("g")
 violin
   .append("text")
   .attr("class", "axis-label")
-  .attr("y", sideplotMargin)
+  .attr("y", 20)
   .attr("x", 0 + sideplotWidth / 2)
   .style("text-anchor", "middle")
   .text("Price distrubution");
@@ -371,6 +371,64 @@ termbar.append('g')
   .attr("transform", "translate(0," + (sideplotHeight - sideplotMargin) + ")")
   .call(d3.axisBottom(xb));
 
+// add the title and color labels
+termbar
+  .append("text")
+  .attr("class", "axis-label")
+  .attr("y", 20)
+  .attr("x", 0 + sideplotWidth / 2)
+  .style("text-anchor", "middle")
+  .text("Number of short/long term rooms");
+
+termbar
+  .append('g')
+  .attr('id', 'stermlabel')
+  .append('circle')
+  .attr("cy", 50)
+  .attr("cx", 350)
+  .attr('r', 8)
+  .style('fill', '#81c784')
+
+d3.select('#stermlabel')
+  .append('text')
+  .attr("y", 54)
+  .attr("x", 360)
+  .text('Short term');
+
+termbar
+  .append('g')
+  .attr('id', 'ltermlabel')
+  .append('circle')
+  .attr("cy", 70)
+  .attr("cx", 350)
+  .attr('r', 8)
+  .style('fill', '#69badb')
+
+d3.select('#ltermlabel')
+  .append('text')
+  .attr("y", 74)
+  .attr("x", 360)
+  .text('Long term');
+
+var yb = d3.scaleLinear()
+  .domain([0, 17630]) // 17630 is the max height caculated from the data below. I want to pre render the axis cause it's more natural.
+  .range([sideplotHeight - sideplotMargin, sideplotMargin]);
+
+termbar.append('g')
+  .attr("class", "axis")
+  .attr("transform", "translate(" + sideplotMargin + ",0)")
+  .call(d3.axisLeft(yb));
+
+// subgroup position
+var xSubgroup = d3.scaleBand()
+  .domain(subgroups)
+  .range([0, xb.bandwidth()])
+  .padding([0.05])
+
+var subcolor = d3.scaleOrdinal()
+  .domain(subgroups)
+  .range(['#81c784', '#69badb'])
+
 d3.csv(
   "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
 ).then(function (data) {
@@ -382,39 +440,35 @@ d3.csv(
   })
   console.log(newdata);
   var maxheight = d3.max(newdata, function (d) { return Math.max(d.short_term, d.long_term) })
-  console.log(maxheight);
-
-  var yb = d3.scaleLinear()
-    .domain([0, maxheight])
-    .range([sideplotHeight - sideplotMargin, sideplotMargin]);
+  // maxheight = 17630
 
   termbar.append('g')
-    .attr("class", "axis")
-    .attr("transform", "translate(" + sideplotMargin + ",0)")
-    .call(d3.axisLeft(yb));
+    .selectAll('g')
+    .data(newdata)
+    .enter()
+    .append('g')
+    .attr('transform', function (d) { return "translate(" + xb(d.neighbourhood_group) + ",0)"; })
+    .selectAll('rect')
+    .data(function (d) { return subgroups.map(function (key) { return { key: key, value: d[key] }; }); })
+    .enter().append('rect')
+    .attr('x', d => xSubgroup(d.key))
+    .attr('y', d => yb(d.value))
+    .attr('width', xSubgroup.bandwidth())
+    .attr('height', d => sideplotHeight - sideplotMargin - yb(d.value))
+    .style('fill', d => subcolor(d.key))
+    .append('text')
+    .text(d => d.value)
+    .attr('x', d => xSubgroup(d.key))
+    .attr('y', d => yb(d.value));
 
-  // subgroup position
-  var xSubgroup = d3.scaleBand()
-                    .domain(subgroups)
-                    .range([0, xb.bandwidth()])
-                    .padding([0.05])
-  
-  var subcolor = d3.scaleOrdinal()
-                    .domain(subgroups)
-                    .range(['#81c784', '#69badb'])
-  
-  termbar.append('g')
-          .selectAll('g')
-          .data(newdata)
-          .enter()
-          .append('g')
-          .attr('transform', function(d) {return "translate(" + xb(d.neighbourhood_group) + ",0)";})
-          .selectAll('rect')
-          .data(function(d) {return subgroups.map(function(key){return {key:key, value:d[key]};});})
-          .enter().append('rect')
-                  .attr('x', d => xSubgroup(d.key))
-                  .attr('y', d => yb(d.value))
-                  .attr('width', xSubgroup.bandwidth())
-                  .attr('height', d => sideplotHeight-sideplotMargin- yb(d.value))
-                  .attr('fill', d => subcolor(d.key));                    
+  // add the text label
+
+  termbar.selectAll("text")
+    .data(newdata)
+    .enter().append("text")
+    .attr("class", "barstext")
+    .attr('x', d => xSubgroup(d.key))
+    .attr('y', d => yb(d.value))
+    .text(function (d) { return d.value })
+
 })
