@@ -1,16 +1,9 @@
 const update = () => {
-  //console.time("load");
   d3.csv(
     "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
-  ).then(function(data) {
-    //console.timeEnd("load");
-    //console.log(updateData(data));
-    //console.time("render");
-    //console.time("update data");
+  ).then(function (data) {
     var selecteddata = updateData(data);
-    //console.timeEnd("update data");
     renderVis(selecteddata);
-    //console.timeEnd("render");
   });
 }
 update();
@@ -63,7 +56,7 @@ svg
 svg
   .append("text")
   .attr("class", "axis-label")
-  .attr("y", height-15)
+  .attr("y", height - 15)
   .attr("x", 0 + width / 2)
   .style("text-anchor", "middle")
   .text("Longitude");
@@ -97,16 +90,16 @@ var legend = d3
   .attr("width", 75)
   .attr("height", height)
   .append("g")
-  .attr("transform", "translate(" +0 + "," + margin + ")");
+  .attr("transform", "translate(" + 0 + "," + margin + ")");
 
 var linearGradient = legend.append("defs")
   .append("linearGradient")
   .attr("id", "gradient")
   .attr('x1', '0%') // bottom
-            .attr('y1', '100%')
-            .attr('x2', '0%') // to top
-            .attr('y2', '0%')
-            .attr('spreadMethod', 'pad');
+  .attr('y1', '100%')
+  .attr('x2', '0%') // to top
+  .attr('y2', '0%')
+  .attr('spreadMethod', 'pad');
 
 linearGradient
   .selectAll("stop")
@@ -133,13 +126,13 @@ legend
 
 // add the legend axis
 var legendscale = d3.scaleLinear()
-                    .domain([0,400])
-                    .range([height-margin,margin])
+  .domain([0, 400])
+  .range([height - margin, margin])
 
 d3.select("#legend-svg").append("g")
-      .attr("class", "axis")
-      .attr("transform", "translate(" + 25 + ", 0)")
-      .call(d3.axisRight(legendscale));
+  .attr("class", "axis")
+  .attr("transform", "translate(" + 25 + ", 0)")
+  .call(d3.axisRight(legendscale));
 
 d3.select("#legend-svg")
   .append("text")
@@ -155,28 +148,28 @@ d3.select("#legend-svg")
 var slider = document.getElementById('slider');
 
 noUiSlider.create(slider, {
-    start: [0, 10000],
-    tooltips: [true, true],
-    connect:true,
-    // it's a lonlinear distribution
-    range: {
-        'min': [0,10],
-        '25%': [70,10],
-        '50%': [100,10],
-        '75%:': [200,100],
-        'max': 10000
-    },
-    pips: {
-      mode: 'range',
-      density: 3
-    },
+  start: [0, 10000],
+  tooltips: [true, true],
+  connect: true,
+  // it's a lonlinear distribution
+  range: {
+    'min': [0, 1],
+    '25%': [70, 1],
+    '50%': [100, 1],
+    '75%:': [200, 100],
+    'max': 10000
+  },
+  pips: {
+    mode: 'range',
+    density: 3
+  },
 });
 
 // get the value of checked checkboxes
 const getCheckedBoxes = (name) => {
   var checkboxes = document.getElementsByName(name);
   var boxesChecked = [];
-  for (var i=0; i<checkboxes.length; i++) {
+  for (var i = 0; i < checkboxes.length; i++) {
     if (checkboxes[i].checked) {
       boxesChecked.push(checkboxes[i].value);
       //console.log(checkboxes[i].value);
@@ -193,25 +186,27 @@ function updateData(data) {
 
   // get the room types checked
   var roomtypes = getCheckedBoxes("roomtypechoice");
-  console.log(roomtypes);  
-  if (roomtypes.length === 0) { 
+  console.log(roomtypes);
+  if (roomtypes.length === 0) {
     alert("Please choose at least one room type.");
   };
 
   // get the neighbourhood group checked
   var nbhGroups = getCheckedBoxes("nbhchoice")
-  if (nbhGroups.length === 0) { 
+  if (nbhGroups.length === 0) {
     alert("Please choose at least one neighbourhood group.")
   };
- 
+
   // filter the data according to user's choice
   var filterdata = data.filter(d => {
-    return d.price>= minPrice && d.price <= maxPrice && roomtypes.includes(d.room_type) && nbhGroups.includes(d.neighbourhood_group);
+    return d.price >= minPrice && d.price <= maxPrice && roomtypes.includes(d.room_type) && nbhGroups.includes(d.neighbourhood_group);
   })
   //console.log(filterdata);
+  d3.select('#roomnumber').text(filterdata.length);
   return filterdata;
 }
 
+// try to progressively render the data
 function renderVis(data) {
   svg
     .selectAll("circle")
@@ -231,3 +226,195 @@ function renderVis(data) {
     .attr("fill", d => colorScale(d["price"]))
     .style("opacity", 0.9);
 }
+
+
+//violin plot
+
+var sideplotWidth = 500;
+var sideplotHeight = height / 2;
+var sideplotMargin = 50;
+
+d3.select('#container')
+  .append('div')
+  .attr("id", "sideplot")
+  .attr("width", 500)
+  .attr("height", height);
+
+d3.select('#sideplot')
+  .append('svg')
+  .attr('id', 'violinPlot')
+  .attr('width', sideplotWidth)
+  .attr('height', sideplotHeight);
+
+var violin = d3.select('#violinPlot');
+
+var xv = d3.scaleBand()
+  .range([sideplotMargin, sideplotWidth - sideplotMargin])
+  .domain(["Brooklyn", "Manhattan", "Queens", "Staten Island", "Bronx"])
+  .padding(0.05)
+
+violin.append("g")
+  .attr("class", "axis")
+  .attr("transform", "translate(0," + (sideplotHeight - sideplotMargin) + ")")
+  .call(d3.axisBottom(xv))
+
+violin
+  .append("text")
+  .attr("class", "axis-label")
+  .attr("y", sideplotMargin)
+  .attr("x", 0 + sideplotWidth / 2)
+  .style("text-anchor", "middle")
+  .text("Price distrubution");
+
+var yv = d3.scaleLinear()
+  .domain([0, 530])
+  .range([sideplotHeight - sideplotMargin, sideplotMargin])
+
+violin.append("g")
+  .attr("class", "axis")
+  .attr("transform", "translate(" + sideplotMargin + ",0)")
+  .call(d3.axisLeft(yv))
+
+d3.csv(
+  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+).then(function (data) {
+  var histogram = d3.histogram()
+    .domain(yv.domain())
+    .thresholds(yv.ticks(20))
+    .value(d => d)
+
+  // filter the data according to user's choice
+  var filterdata = data.filter(d => {
+    return d.price > 0 && d.price < 500;
+  })
+
+  // Compute the binning for each group of the dataset
+  var sumstat = d3.nest()
+    .key(function (d) {
+      return d.neighbourhood_group;
+    })
+    .rollup(function (d) {
+      input = d.map(function (g) {
+        return g.price;
+      })
+      bins = histogram(input)
+      return (bins)
+    })
+    .entries(filterdata)
+
+  // What is the biggest number of value in a bin? We need it cause this value will have a width of 100% of the bandwidth.
+  var maxNum = 0
+  for (i in sumstat) {
+    allBins = sumstat[i].value
+    lengths = allBins.map(function (a) {
+      return a.length;
+    })
+    longuest = d3.max(lengths)
+    if (longuest > maxNum) {
+      maxNum = longuest
+    }
+  }
+
+  // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
+  var xNum = d3.scaleLinear()
+    .range([0, xv.bandwidth()])
+    .domain([-maxNum, maxNum])
+
+  // Add the shape to this svg!
+  violin
+    .selectAll("myViolin")
+    .data(sumstat)
+    .enter()
+    .append("g")
+    .attr("transform", function (d) {
+      return ("translate(" + xv(d.key) + " ,0)")
+    })
+    .append("path")
+    .datum(function (d) {
+      return (d.value)
+    })
+    .style("stroke", "none")
+    .style("fill", "#69badb")
+    .attr("d", d3.area()
+      .x0(function (d) {
+        return (xNum(-d.length))
+      })
+      .x1(function (d) {
+        return (xNum(d.length))
+      })
+      .y(function (d) {
+        return (yv(d.x0))
+      })
+      .curve(d3.curveCatmullRom)
+    )
+});
+
+// the long/short term bar chart
+d3.select('#sideplot')
+  .append('svg')
+  .attr('id', 'termbarchart')
+  .attr('width', sideplotWidth)
+  .attr('height', sideplotHeight);
+
+var termbar = d3.select('#termbarchart')
+
+var subgroups = ["short_term", "long_term"];
+var groups = ["Brooklyn", "Manhattan", "Queens", "Staten Island", "Bronx"];
+
+var xb = d3.scaleBand()
+  .domain(groups)
+  .range([sideplotMargin, sideplotWidth - sideplotMargin])
+  .padding([0.2]);
+
+termbar.append('g')
+  .attr("class", "axis")
+  .attr("transform", "translate(0," + (sideplotHeight - sideplotMargin) + ")")
+  .call(d3.axisBottom(xb));
+
+d3.csv(
+  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+).then(function (data) {
+  //restructure the data
+  var newdata = groups.map(ng => {
+    var shortTermNum = data.filter(e => e.neighbourhood_group === ng && e.minimum_nights <= 7).length;
+    var longTermNum = data.filter(e => e.neighbourhood_group === ng && e.minimum_nights > 7).length;
+    return { neighbourhood_group: ng, short_term: shortTermNum, long_term: longTermNum };
+  })
+  console.log(newdata);
+  var maxheight = d3.max(newdata, function (d) { return Math.max(d.short_term, d.long_term) })
+  console.log(maxheight);
+
+  var yb = d3.scaleLinear()
+    .domain([0, maxheight])
+    .range([sideplotHeight - sideplotMargin, sideplotMargin]);
+
+  termbar.append('g')
+    .attr("class", "axis")
+    .attr("transform", "translate(" + sideplotMargin + ",0)")
+    .call(d3.axisLeft(yb));
+
+  // subgroup position
+  var xSubgroup = d3.scaleBand()
+                    .domain(subgroups)
+                    .range([0, xb.bandwidth()])
+                    .padding([0.05])
+  
+  var subcolor = d3.scaleOrdinal()
+                    .domain(subgroups)
+                    .range(['#81c784', '#69badb'])
+  
+  termbar.append('g')
+          .selectAll('g')
+          .data(newdata)
+          .enter()
+          .append('g')
+          .attr('transform', function(d) {return "translate(" + xb(d.neighbourhood_group) + ",0)";})
+          .selectAll('rect')
+          .data(function(d) {return subgroups.map(function(key){return {key:key, value:d[key]};});})
+          .enter().append('rect')
+                  .attr('x', d => xSubgroup(d.key))
+                  .attr('y', d => yb(d.value))
+                  .attr('width', xSubgroup.bandwidth())
+                  .attr('height', d => sideplotHeight-sideplotMargin- yb(d.value))
+                  .attr('fill', d => subcolor(d.key));                    
+})
