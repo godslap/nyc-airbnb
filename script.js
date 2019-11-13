@@ -22,7 +22,7 @@ svg
   .append("svg:image")
   .attr(
     "xlink:href",
-    "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FWebp.net-resizeimage.jpg?v=1571367858704"
+    "https://github.com/imyuanwen/nyc-airbnb/blob/master/assets/nyc-resizeimage.jpg?raw=true"
   )
   .attr("width", width - 2 * margin)
   .attr("height", height - 2 * margin)
