@@ -385,30 +385,32 @@ termbar
   .attr('id', 'stermlabel')
   .append('circle')
   .attr("cy", 50)
-  .attr("cx", 350)
+  .attr("cx", 300)
   .attr('r', 8)
   .style('fill', '#81c784')
 
 d3.select('#stermlabel')
   .append('text')
   .attr("y", 54)
-  .attr("x", 360)
-  .text('Short term');
+  .attr("x", 310)
+  .style('font-size', '0.8em')
+  .text('Short term(min nights <= 7)');
 
 termbar
   .append('g')
   .attr('id', 'ltermlabel')
   .append('circle')
   .attr("cy", 70)
-  .attr("cx", 350)
+  .attr("cx", 300)
   .attr('r', 8)
   .style('fill', '#69badb')
 
 d3.select('#ltermlabel')
   .append('text')
   .attr("y", 74)
-  .attr("x", 360)
-  .text('Long term');
+  .attr("x", 310)
+  .style('font-size', '0.8em')
+  .text('Long term(min nights > 7)');
 
 var yb = d3.scaleLinear()
   .domain([0, 17630]) // 17630 is the max height caculated from the data below. I want to pre render the axis cause it's more natural.
@@ -463,12 +465,19 @@ d3.csv(
 
   // add the text label
 
-  termbar.selectAll("text")
+  termbar.append('g')
+    .selectAll('g')
     .data(newdata)
+    .enter()
+    .append('g')
+    .attr('transform', function (d) { return "translate(" + xb(d.neighbourhood_group) + ",0)"; })
+    .selectAll("text")
+    .data(function (d) { return subgroups.map(function (key) { return { key: key, value: d[key] }; }); })
     .enter().append("text")
     .attr("class", "barstext")
     .attr('x', d => xSubgroup(d.key))
-    .attr('y', d => yb(d.value))
+    .attr('y', d => yb(d.value)-5)
+    .style('font-size', '0.8em')
     .text(function (d) { return d.value })
 
 })
