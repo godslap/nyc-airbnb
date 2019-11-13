@@ -1,6 +1,6 @@
 const update = () => {
   d3.csv(
-    "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+    "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
   ).then(function (data) {
     var selecteddata = updateData(data);
     renderVis(selecteddata);
@@ -276,7 +276,7 @@ violin.append("g")
   .call(d3.axisLeft(yv))
 
 d3.csv(
-  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+  "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
 ).then(function (data) {
   var histogram = d3.histogram()
     .domain(yv.domain())
@@ -432,7 +432,7 @@ var subcolor = d3.scaleOrdinal()
   .range(['#81c784', '#69badb'])
 
 d3.csv(
-  "https://cdn.glitch.com/f8765653-1d6c-4bc6-be0e-646c5a8fad65%2FAB_NYC_2019.csv?v=1570812688466"
+  "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
 ).then(function (data) {
   //restructure the data
   var newdata = groups.map(ng => {
