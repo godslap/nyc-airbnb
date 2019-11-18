@@ -206,7 +206,6 @@ function updateData(data) {
   return filterdata;
 }
 
-// try to progressively render the data
 function renderVis(data) {
   svg
     .selectAll("circle")
@@ -227,7 +226,7 @@ function renderVis(data) {
     .style("opacity", 0.9);
 }
 
-
+// =================================================================================
 //violin plot
 
 var sideplotWidth = 500;
@@ -349,6 +348,7 @@ d3.csv(
     )
 });
 
+// =======================================================================================================================================
 // the long/short term bar chart
 d3.select('#sideplot')
   .append('svg')
@@ -431,6 +431,7 @@ var subcolor = d3.scaleOrdinal()
   .domain(subgroups)
   .range(['#81c784', '#69badb'])
 
+
 d3.csv(
   "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
 ).then(function (data) {
@@ -476,8 +477,189 @@ d3.csv(
     .enter().append("text")
     .attr("class", "barstext")
     .attr('x', d => xSubgroup(d.key))
-    .attr('y', d => yb(d.value)-5)
+    .attr('y', d => yb(d.value) - 5)
     .style('font-size', '0.8em')
     .text(function (d) { return d.value })
 
+})
+
+// ==================================================================================================
+// Availability by neighborhoods.
+
+var availabilityChartWidth = 1000;
+var availabilityChartHeight = 5000;
+var availabilityChartMargin = 40;
+
+d3.select("#container")
+  .append('div')
+  .attr('id', 'chartbelow')
+
+var availabilityChart = d3.select("#chartbelow")
+  .append("svg")
+  .attr('id', 'availabilityChart')
+  .attr("width", availabilityChartWidth)
+  .attr("height", availabilityChartHeight);
+
+// Define a variety of scales, for color, x axis and y axis.
+var xa = d3.scaleBand()
+  .rangeRound([availabilityChartMargin, availabilityChartHeight - availabilityChartMargin]);
+
+var ya = d3.scaleLinear()
+  .range([availabilityChartMargin, availabilityChartWidth - availabilityChartMargin]);
+
+var za = d3.scaleLinear()
+  .range([availabilityChartMargin, availabilityChartWidth - availabilityChartMargin]);
+
+var set = [];
+
+var tooltip = d3.select('#chartbelow').append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
+
+function groupByNeighbourhood(data_set) {
+  var grouped_data = data_set.reduce(function (r, a) {
+    r[a.neighbourhood] = r[a.neighbourhood] || [];
+    r[a.neighbourhood].push(parseInt(a.availability_365));
+    return r;
+  }, {});
+
+  return grouped_data;
+}
+
+function count_neighbourhood(grouped_data) {
+  var countData = [];
+  for (var neighbourhood in grouped_data) {
+    countData.push({ 'neighbourhood': neighbourhood, 'count': grouped_data[neighbourhood].length });
+  }
+  return countData;
+}
+
+function avg_neighbourhood(grouped_data) {
+  var avgData = [];
+  for (var neighbourhood in grouped_data) {
+    avgData.push({ 'neighbourhood': neighbourhood, 'avg': avgAvailable(grouped_data, neighbourhood) });
+  }
+  return avgData;
+}
+
+function avgAvailable(grouped_data, neighbourhood) {
+  var sum = grouped_data[neighbourhood].reduce(function (s, x) {
+    return s + x;
+  }, 0);
+  return sum / grouped_data[neighbourhood].length;
+}
+
+function maxCount(grouped_data) {
+  var count = 0;
+  for (var neighbourhood in grouped_data) {
+    count = Math.max(count, grouped_data[neighbourhood].length);
+  }
+  return count;
+}
+
+d3.csv(
+  "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
+).then(function (data) {
+  var grouped_data = groupByNeighbourhood(data);
+  var countData = count_neighbourhood(grouped_data);
+  var avgData = avg_neighbourhood(grouped_data);
+  xa.domain(countData.map(function (d) { return d.neighbourhood; }));
+  ya.domain([0, d3.max(countData, function (d) { return d.count; })]);
+  za.domain([0, d3.max(avgData, function (d) { return d.avg; })]);
+  set = grouped_data;
+
+  // Add axes.  First the X axis and label.
+  availabilityChart.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(110," + (availabilityChartHeight - availabilityChartMargin) + ")")
+    .call(d3.axisBottom(ya))
+
+
+  availabilityChart.append("text")
+    .attr("class", "axis-label")
+    .attr("y", 10)
+    .attr("x", 100)
+    .style("text-anchor", "middle")
+    .text("average available days / year");
+
+  // Now the Y axis and label.
+  availabilityChart.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(" + 150 + ",0)")
+    .call(d3.axisLeft(xa))
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", "-.55em");
+  // .attr("transform", "rotate(-90)" );;
+
+  availabilityChart.append("text")
+    .attr("class", "axis-label")
+    .attr("y", 5000)
+    .attr("x", 100)
+    .style("text-anchor", "middle")
+    .text("Number of rooms");
+
+  availabilityChart.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(110,40)")
+    .call(d3.axisTop(za));
+
+  availabilityChart.selectAll("bar")
+    .data(countData)
+    .enter()
+    .append("rect")
+    .style("fill", "#69badb")
+    .attr("x", function (d) { return ya(470); })
+    .attr("height", xa.bandwidth() - 5)
+    .attr("y", function (d) { return xa(d.neighbourhood); })
+    .attr("width", function (d) { return ya(d.count); })
+    .on("mouseover", function (d) {
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+
+      tooltip.html("<h2>Neighbourhood:"
+        + d.neighbourhood
+        + "</h2><h2>Number of rooms:"
+        + d.count + "</h2>")
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.transition()
+        .duration(500)
+        .style("opacity", 0);
+    });
+
+  availabilityChart.selectAll("bar")
+    .data(avgData)
+    .enter()
+    .append("rect")
+    .style("fill", "orange")
+    .attr("x", function (d) {
+      // console.log(d.neighbourhood + ' avg:' +d.avg);
+      return 110 + za(d.avg);
+    })
+    .attr("height", xa.bandwidth() - 5)
+    .attr("y", function (d) { return xa(d.neighbourhood); })
+    .attr("width", function (d) { return 5; })
+    .on("mouseover", function (d) {
+      tooltip.transition()
+        .duration(200)
+        .style("opacity", .9);
+
+      tooltip.html("<h2>Neighbourhood:"
+        + d.neighbourhood
+        + "</h2><h2>Average available days / year:"
+        + d.avg.toFixed(2) + "</h2>")
+        .style("left", (d3.event.pageX) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      tooltip.transition()
+        .duration(500)
+        .style("opacity", 0);
+    })
 })

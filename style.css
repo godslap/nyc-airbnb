@@ -87,3 +87,26 @@ label {
 path, line {
   color: #c7c7c7;
 }
+
+#chartbelow {
+  height: 800px;
+  width: auto;
+  border-top: 1px solid #c7c7c7;
+  padding: 20px;
+  padding-left: 10px;
+  overflow: scroll;
+  margin-top: 4em;
+}
+
+#chartbelow .tooltip {   
+  position: absolute;         
+  text-align: center;         
+  width: 300px;                    
+  height: auto;                   
+  padding: 2px;               
+  font: 9px sans-serif;      
+  background: lightsteelblue; 
+  border: 0px;        
+  border-radius: 8px;         
+  pointer-events: none;   
+}
