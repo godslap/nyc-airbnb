@@ -88,10 +88,18 @@ path, line {
   color: #c7c7c7;
 }
 
+#avai-axis path,line {
+  color: orange;
+}
+
+#count-axis path,line {
+  color: #69badb;
+}
+
 #chartbelow {
   height: 800px;
   width: auto;
-  border-top: 1px solid #c7c7c7;
+  /* border-top: 1px solid #c7c7c7; */
   padding: 20px;
   padding-left: 10px;
   overflow-y: scroll;

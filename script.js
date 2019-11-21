@@ -274,6 +274,15 @@ violin.append("g")
   .attr("transform", "translate(" + sideplotMargin + ",0)")
   .call(d3.axisLeft(yv))
 
+violin.append("text")
+  .attr("transform", "rotate(90)")
+  .attr("class", "axis-label")
+  .attr("y", 0)
+  .attr("x", 0 + sideplotHeight / 2)
+  .style("text-anchor", "middle")
+  .style('font-size', '0.8em')
+  .text("Price($)");
+
 d3.csv(
   "https://raw.githubusercontent.com/imyuanwen/nyc-airbnb/master/assets/AB_NYC_2019.csv"
 ).then(function (data) {
@@ -420,6 +429,15 @@ termbar.append('g')
   .attr("class", "axis")
   .attr("transform", "translate(" + sideplotMargin + ",0)")
   .call(d3.axisLeft(yb));
+
+termbar.append("text")
+  .attr("transform", "rotate(90)")
+  .attr("class", "axis-label")
+  .attr("y", 0)
+  .attr("x", 0 + sideplotHeight / 2)
+  .style("text-anchor", "middle")
+  .style('font-size', '0.8em')
+  .text("Number of rooms");
 
 // subgroup position
 var xSubgroup = d3.scaleBand()
@@ -572,6 +590,7 @@ d3.csv(
   // Add axes.  First the X axis and label.
   availabilityChart.append("g")
     .attr("class", "axis")
+    .attr('id', 'count-axis')
     .attr("transform", "translate(110," + (availabilityChartHeight - availabilityChartMargin) + ")")
     .call(d3.axisBottom(ya))
 
@@ -603,6 +622,7 @@ d3.csv(
 
   availabilityChart.append("g")
     .attr("class", "axis")
+    .attr('id', 'avai-axis')
     .attr("transform", "translate(110,40)")
     .call(d3.axisTop(za));
 
