@@ -88,11 +88,11 @@ path, line {
   color: #c7c7c7;
 }
 
-#avai-axis path,line {
+#avai-axis path {
   color: orange;
 }
 
-#count-axis path,line {
+#count-axis path {
   color: #69badb;
 }
 
