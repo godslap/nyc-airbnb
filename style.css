@@ -120,3 +120,16 @@ path, line {
   top: 0;
   left: 0;  
 }
+
+#sideplot {
+  display: block;
+  width: 500px;
+  height: auto;
+}
+@media screen and (max-width: 1639px) {
+  #sideplot {
+    display: flex;
+    width: 1000px;
+    margin-top: 2em;
+  }
+}

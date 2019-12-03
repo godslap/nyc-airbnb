@@ -236,8 +236,6 @@ var sideplotMargin = 50;
 d3.select('#container')
   .append('div')
   .attr("id", "sideplot")
-  .attr("width", 500)
-  .attr("height", height);
 
 d3.select('#sideplot')
   .append('svg')
